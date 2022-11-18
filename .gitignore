@@ -1,0 +1,18 @@
+# caches / tmp
+__pycache__
+
+# folders that populate automatically
+batches/*
+logs/*
+videos/*
+
+# files that populate automatically
+download_archive.txt
+
+# venv
+.venv
+
+# secrets
+.env
+client_secret.json
+credentials.json
