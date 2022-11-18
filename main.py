@@ -23,9 +23,16 @@ if __name__ == "__main__":
 	from lib.logger import Logger
 	from lib.google_drive import DriveAPI
 	
-	logger = Logger(Path("./logs/shaheer.txt"))
+	logger = Logger(Path("./logs.txt"))
+
+	batches_dir = Path("./batches").resolve()
+	if not batches_dir.exists():
+		batches_dir.mkdir()
 
 	videos_dir = Path("./videos").resolve()
+	if not videos_dir.exists():
+		videos_dir.mkdir()
+
 	download_archive = Path("./download_archive.txt").resolve()
 
 	settings = Path("./gdrive.settings.yaml").resolve()
@@ -34,7 +41,7 @@ if __name__ == "__main__":
 
 	gdrive = DriveAPI(settings, credentials, video_folder_id, logger)
 
-	for batch in Path("./batches").iterdir():
+	for batch in batches_dir.iterdir():
 		threads: List[threading.Thread] = []
 
 		print(f"Creating {len(threads)} threads for the current batch [{batch}]")
