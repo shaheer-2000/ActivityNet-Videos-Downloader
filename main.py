@@ -63,7 +63,6 @@ if __name__ == "__main__":
 		batch_partition_size = ceil(len(batch_urls) / batch_partition_count)
 		batches_of_batch_urls = []
 
-		"""
 		for i in range(batch_partition_count):
 			start_index = i * batch_partition_size
 			end_index = start_index + batch_partition_size
@@ -82,11 +81,12 @@ if __name__ == "__main__":
 			thread.join()
 
 		print(f"Batch [{batch}] finished downloading...")
-		"""
+
 		video_files = [f.resolve() for f in videos_dir.iterdir()]
 		
 		print(f"{len(video_files)} videos were downloaded for current batch [{batch}]")
 
+		## Zip the current batch's video files
 		"""
 		print(f"Zipping video files downloaded for current batch [{batch}]")
 
@@ -96,9 +96,10 @@ if __name__ == "__main__":
 				for f in video_files:
 					archive.write(f)
 		
-		print(f"Uploading compressed video files [{archived_batch_name}] to Google Drive")
+		# print(f"Uploading compressed video files [{archived_batch_name}] to Google Drive")
 		"""
 
+		## Upload current batch's video files
 		print(f"Uploading video files for the current batch [{batch}]")
 
 		try:
