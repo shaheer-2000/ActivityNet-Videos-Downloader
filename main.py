@@ -3,7 +3,6 @@ import threading
 from lib.yt_dl import YoutubeDownloader
 
 # TODO: graceful termination + terminate thread on ctrl + c
-# TODO: the batch file needs to be partitioned further for faster downloads on each batch (cpu_count() * 2) partitions
 
 def download_batch_threaded(batch_file, start_index, batch, videos_dir, download_archive, logger: "Logger"):
 	yt_dl = YoutubeDownloader(videos_dir, download_archive, logger)

@@ -50,11 +50,11 @@ class DriveAPI:
 				f.Upload()
 				self.logger.upload_succeeded(file.stem, self.videos_dir_id)
 			except ApiRequestError as e:
-				print(f"Failed to upload file [{file}]\n{e}")
-				self.logger.upload_failed(file.stem(), e)
+				print(f"Failed to upload file [{file.stem}]\n{e}")
+				self.logger.upload_failed(file.stem, e)
 				raise RuntimeError("Failed to upload to Google Drive")
 			except Exception as e:
-				self.logger.upload_failed(file.stem(), e)
+				self.logger.upload_failed(file.stem, e)
 				raise RuntimeError(f"Failed to upload to Google Drive\n{e}")
 
 
