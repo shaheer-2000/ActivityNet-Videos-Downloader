@@ -39,8 +39,8 @@ class DriveAPI:
 			print(f"id = {metadata.get('id')} | filename = {metadata.get('filename')} | type = {metadata.get('type')} | version = {metadata.get('version')} | created at = {metadata.get('createdAt')} | modified at = {metadata.get('modifiedAt')}")
 
 	def upload_files(self, files: List[Path]) -> None:
-		if self.video_files is None:
-			self.get_files()
+		# if self.video_files is None:
+		self.get_files() # get already uploaded files each time this method is invoked
 
 		files = list(filter(lambda f: f.name not in self.video_files_titles, files))
 		for file in files:
@@ -48,6 +48,7 @@ class DriveAPI:
 				f = self.drive.CreateFile({ "parents": [{ "id": self.videos_dir_id }] })
 				f.SetContentFile(file.as_posix())
 				f.Upload()
+				print(f"Uploaded '{file.stem}' to Google Drive")
 				self.logger.upload_succeeded(file.stem, self.videos_dir_id)
 			except ApiRequestError as e:
 				print(f"Failed to upload file [{file.stem}]\n{e}")
