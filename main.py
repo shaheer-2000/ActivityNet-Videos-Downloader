@@ -20,6 +20,7 @@ if __name__ == "__main__":
 	from math import ceil
 	import zipfile
 	import sys
+	from time import sleep
 
 	load_dotenv()
 
@@ -112,6 +113,7 @@ if __name__ == "__main__":
 			print(f"Uploading video files for the current batch [{batch}]")
 
 			keep_restarting_upload = True
+			upload_retry_count = 0
 
 			while (keep_restarting_upload):
 				try:
@@ -119,6 +121,7 @@ if __name__ == "__main__":
 					# gdrive.upload_files([(archive_dir / archived_batch_name).resolve().as_posix()]) # archived uploading
 					# uploading entire batch
 					gdrive.upload_files(video_files) # to mitigate connection issues
+					upload_retry_count = 0 # reset count if succeeds
 					"""
 					# batching video files for upload
 					video_files_count = len(video_files)
@@ -128,11 +131,22 @@ if __name__ == "__main__":
 					"""
 				except Exception as e:
 					print(f"There was an issue while uploading to Google Drive, current batch is [{batch}]\n{e}")
+					print("Automatically restarting upload in 1 minute\nYou can kill this process using Ctrl+C")
+					upload_retry_count += 1
+					sleep(60)
+					"""
+					# if upload retries exceed threshold, do some operation here
+					if upload_retry_count > 5:
+						# do some operation here
+						pass
+					"""
+					"""
 					print(f"Do you want to restart the upload process? (it'll resume from where it left off) [y/N]: ")
 					if input().lower() != "y":
 						keep_restarting_upload = False
 						print("Exiting gracefully")
 						exit(1)
+					"""
 
 		if len(flags) and "-r" in flags:
 			# empty videos folder here
