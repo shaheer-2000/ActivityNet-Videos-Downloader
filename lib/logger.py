@@ -11,7 +11,7 @@ class Logger:
 	def log(self, content: str):
 		with open(self.logs, "a+") as f:
 			now = datetime.now()
-			f.write(f"[{now.strftime('%Y/%M/%d - %H:%M%S')}] {content}")
+			f.write(f"[{now.strftime('%Y/%M/%d - %H:%M:%S')}] {content}\n")
 	
 	def read_logs(self):
 		with open(self.logs, "r") as f:
@@ -19,6 +19,9 @@ class Logger:
 
 	def batch_download_failed(self, id, title, reason):
 		self.log("Failed to download '{title}' [batch - {id}] with reason '{reason}'")
+
+	def download_failed(self, title, message):
+		self.log("Failed to download '{title}' with the error message {message}")
 
 	def upload_failed(self, title, reason):
 		self.log("Failed to upload '{title}' with reason '{reason}'")

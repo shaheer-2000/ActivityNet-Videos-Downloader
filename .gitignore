@@ -3,11 +3,12 @@ __pycache__
 
 # folders that populate automatically
 batches/*
-logs/*
 videos/*
+archive
 
 # files that populate automatically
 download_archive.txt
+logs.txt
 
 # venv
 .venv

@@ -25,6 +25,7 @@ class DriveAPI:
 		self.video_files = self.drive.ListFile({
 			"q": f"'{self.videos_dir_id}' in parents and trashed=false"
 		}).GetList()
+		self.video_files_titles = [Path(f["title"]).name for f in self.video_files]
 
 	def get_file_metadata(self, file: GoogleDriveFile):
 		return { "id": file.get("id"), "filename": file.get("title"), "type": file.get("mimeType"), "version": file.get("version"), "createdAt": file.get("createdDate"), "modifiedAt": file.get("modifiedDate") }
@@ -41,16 +42,20 @@ class DriveAPI:
 		if self.video_files is None:
 			self.get_files()
 
-		files = list(filter(lambda f: f not in self.video_files, files))
+		files = list(filter(lambda f: f.name not in self.video_files_titles, files))
 		for file in files:
 			try:
-				f = self.drive.CreateFile({ "parents": [{ "id": self.videos_dir_id }]})
-				f.SetContentFile(file)
+				f = self.drive.CreateFile({ "parents": [{ "id": self.videos_dir_id }] })
+				f.SetContentFile(file.as_posix())
 				f.Upload()
-				self.logger.upload_succeeded(file, self.videos_dir_id)
+				self.logger.upload_succeeded(file.stem, self.videos_dir_id)
 			except ApiRequestError as e:
 				print(f"Failed to upload file [{file}]\n{e}")
-				self.logger.upload_failed(file, e)
+				self.logger.upload_failed(file.stem(), e)
+				raise RuntimeError("Failed to upload to Google Drive")
+			except Exception as e:
+				self.logger.upload_failed(file.stem(), e)
+				raise RuntimeError(f"Failed to upload to Google Drive\n{e}")
 
 
 if __name__ == "__main__":
@@ -62,7 +67,9 @@ if __name__ == "__main__":
 	
 	load_dotenv(dotenv_path=Path("./.env").resolve())
 
-	gdrive = DriveAPI(Path("./gdrive.settings.yaml").resolve(), Path("./credentials.json").resolve(), env.get("VIDEO_FOLDER_ID"))
+	gdrive = DriveAPI(Path("./gdrive.settings.yaml").resolve(), Path("./credentials.json").resolve(), env.get("VIDEO_FOLDER_ID"), logger=Logger(Path("./logs.txt")))
 
-	gdrive.list_files()
+	# gdrive.list_files()
+	gdrive.get_files()
+	print([Path(f["title"]).name for f in gdrive.video_files])
 	

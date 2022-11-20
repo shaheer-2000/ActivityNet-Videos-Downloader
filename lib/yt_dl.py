@@ -1,8 +1,9 @@
+from typing import List
 from pathlib import Path
 from time import sleep
 
 import youtube_dl
-
+from youtube_dl.utils import DownloadError, SameFileError, ExtractorError, GeoRestrictedError, UnavailableVideoError, UnsupportedError
 class YoutubeDownloader:
 	def __init__(self, videos_dir: Path, download_archive: Path, logger: "Logger"):
 		if not download_archive.exists():
@@ -32,9 +33,15 @@ class YoutubeDownloader:
 		self.retries = self.MAX_RETRIES
 		self.batch = None
 
-	def download_batch(self, batch_file: Path | None):
-		if self.batch is None:
+	def download_batch(self, batch_file: Path | None = None, batch: List[str] | None = None):
+		if batch_file is None and batch is None:
+			raise RuntimeError("Neither batch_file nor batch (as a list of URLs) was provided as an argument")
+		if not batch_file is None and not batch is None:
+			raise RuntimeError("Both batch_file and batch (as a list of URLs) was provided, when only 1 is accepted")
+		if not batch_file is None and self.batch is None:
 			self.load_batch(batch_file)
+		else:
+			self.batch = batch
 
 		try:
 			self.yt_dl.download(self.batch)
